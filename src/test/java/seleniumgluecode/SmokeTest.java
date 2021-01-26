@@ -9,6 +9,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import org.openqa.selenium.support.ui.WebDriverWait;
+import pom.LoginPage;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
@@ -16,8 +17,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class SmokeTest {
-    private ChromeDriver driver = Hooks.getDriver();
+public class SmokeTest extends TestBase{
+
     By usernameElem = By.id("UserName");
     By passElem = By.id("Password");
     By loginButtonElem = By.className("btnenviar");
@@ -45,14 +46,14 @@ public class SmokeTest {
     //By textoAlertBrokerNo = By.xpath("//div[@id='cargaAdvertenciaNoParamerizado']/text()[1])");
     By botonCerrarBroker = By.xpath("//div[@id='modalAdvertenciaNoParamerizado']//button[@class='close']");
     By textoAlertBrokerNo2 = By.xpath("//*[@id='cargaAdvertenciaNoParamerizado']/text()[1]");
-    String idCliente = "PASSION GROWERS WEST LLCMIA";
+    String idClienteText = "PASSION GROWERS WEST LLCMIA";
     //By puertoDocListElem = By.xpath("//tbody/tr[1]/td[29]/span[1]/span[1]/span[2]/span[1]");
     By puertoDocListElem = By.xpath("//td[@data-container-for='ciudadDestinoDocumentos']/span[@aria-owns='idPuertoDestinoDocumentos_listbox']");
     By puertoDocBoxElem = By.xpath("//input[@aria-owns='idPuertoDestinoDocumentos_listbox']");
     By productoListElem = By.xpath("//tbody/tr[1]/td[30]/span[1]/span[1]/span[2]/span[1]");
     By productoBoxElem = By.xpath("//input[@aria-owns='idProducto_listbox']");
     By tipoGuiaListElem = By.xpath("//td[@data-container-for='tipoGuia']/span[@aria-owns='tipoGuia_listbox']");
-    By tipoGuiaOpcionElem = By.xpath("//ul[@id='tipoGuia_listbox']//li[1]");//1 es DIRECTA, 2 es CONSOLIDADO
+    By tipoGuiaOpcionElem = By.xpath("//ul[@id='tipoGuia_listbox']//li[2]");//1 es DIRECTA, 2 es CONSOLIDADO
     By historicoListElem = By.xpath("//td[@data-container-for='aplicarHistorico']/span[@aria-owns='aplicarHistorico_listbox']");
     By historicoOpcionElem = By.xpath("//ul[@id='aplicarHistorico_listbox']//li[1]"); //1 es SI, 2 es NO
     By vwebListElem = By.xpath("//td[@data-container-for='visibleWeb']/span[@aria-owns='visibleWeb_listbox']");
@@ -71,18 +72,17 @@ public class SmokeTest {
 
     @Given("^El usuario se encuentra en la pagina de Login de AC$")
     public void elUsuarioSeEncuentraEnLaPaginaDeLoginDeAC() throws Throwable {
-        String urlLogin = driver.getTitle();
-        String titleLoginPAge = "Login - LAG";
-        Assert.assertEquals(titleLoginPAge,urlLogin);
+        //String urlLogin = driver.getTitle();
+        //String titleLoginPAge = "Login - LAG";
+        Assert.assertEquals(loginPage.getTitleLoginPage(),driver.getTitle());
     }
 
     @When("^Ingrese Las credenciales validas$")
     public void ingreseLasCredencialesValidas() throws Throwable {
-        WebElement usernameBox = driver.findElement(usernameElem);
-        WebElement passwordBox = driver.findElement(passElem);
-        usernameBox.sendKeys("hgonzalez");
-        passwordBox.sendKeys("Hgonzalez.2021");
-        Thread.sleep(2000);
+        WebElement usernameBox = driver.findElement(loginPage.getUsernameElem());
+        WebElement passwordBox = driver.findElement(loginPage.getPassElem());
+        usernameBox.sendKeys(loginPage.getUser());
+        passwordBox.sendKeys(loginPage.getPass());
     }
 
     @When("^Haga click en la flecha verde$")
@@ -154,7 +154,7 @@ public class SmokeTest {
 
     @When("^Hago click en el enlace Nueva AWB$")
     public void hagoClickEnElEnlaceNuevaAWB() throws Throwable {
-        Thread.sleep(5000);
+        Thread.sleep(3000);
         WebElement nuevaAwbLink2 = new WebDriverWait(driver,20)
                 .until(ExpectedConditions.presenceOfElementLocated(By.linkText("Nueva AWB")));
         nuevaAwbLink2.click();
@@ -164,10 +164,13 @@ public class SmokeTest {
     public void CompletoLosDatosDeLaNuevaAWB() throws Throwable {
         System.out.println("Completando dato del cliente en el select");
         Robot robot = new Robot();
-        robot.mouseWheel(70);
+        robot.mouseWheel(40);
 
-    // List Cliente   "//input[@aria-owns='idCliente_listbox']"
-        selectField(selectClienteAwbNewElem,inputClienteAwbNewElem, idCliente);
+    // List Cliente
+        //JavascriptExecutor executor = (JavascriptExecutor)driver;
+        //executor.executeScript("arguments[0].scrollIntoView(true);", selectClienteAwbNewElem);
+        //Thread.sleep(1000);
+        selectField(selectClienteAwbNewElem,inputClienteAwbNewElem, idClienteText);
 
     // List Transporte
         selectField(selectTransporteIcaoElem, inputTransporteIcaoElem,"UC");
@@ -228,9 +231,9 @@ public class SmokeTest {
 
     @When("^Se presiona el icono guardar$")
     public void seCompletaElUltimoCampo() throws Throwable {
-        WebElement  selectPago = new WebDriverWait(driver,10)
-                .until(ExpectedConditions.presenceOfElementLocated(selectPagoElem));
-        selectPago.click();
+        WebElement  guardarButton = new WebDriverWait(driver,10)
+                .until(ExpectedConditions.presenceOfElementLocated(guardarButtonElem));
+        //guardarButton.click();
     }
 
     @Then("^Se inserta una nueva fila vacìa en la tabla de reservas$")
