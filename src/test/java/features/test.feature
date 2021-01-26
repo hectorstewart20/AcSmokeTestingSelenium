@@ -13,6 +13,7 @@ Feature: Login de un usuario al sistema AC y Hacer una reserva - Smoke Test
     And   Elijo la Fecha en el calendario
     And   Hago click en el enlace Nueva AWB
     And   Completo los datos de la nueva AWB
+    And   Se presiona el icono guardar
     Then  Se inserta una nueva fila vacìa en la tabla de reservas
 
   #Scenario:
