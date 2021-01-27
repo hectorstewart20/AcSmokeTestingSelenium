@@ -9,6 +9,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import org.openqa.selenium.support.ui.WebDriverWait;
+import pom.HomePage;
 import pom.LoginPage;
 
 import java.awt.*;
@@ -19,23 +20,7 @@ import java.util.logging.Logger;
 
 public class SmokeTest extends TestBase{
 
-    By usernameElem = By.id("UserName");
-    By passElem = By.id("Password");
-    By loginButtonElem = By.className("btnenviar");
-    By menuButtonElem = By.xpath("//*[@id=\"botonMenu\"]");
-    By expandReservaElem = By.xpath("/html/body/div[2]/div[1]/div/div[1]/ul/li[23]/div/span");
-    By gestionReservaMenuElem = By.partialLinkText("n Reservas");
-    By selectClienteAwbNewElem = By.xpath("//td[@data-container-for=\"nombreCliente\"]/span[@aria-owns=\"idCliente_listbox\"]");
-    By inputClienteAwbNewElem = By.xpath("//input[@aria-owns='idCliente_listbox']");
-    By selectTransporteIcaoElem = By.xpath("//span[contains(text(),'Seleccionar ...')]");
-    By inputTransporteIcaoElem = By.xpath("//input[@aria-owns='idTransporte_listbox']");
-    By selectPuertoOrigenElem = By.xpath("//tbody/tr[1]/td[26]/span[1]/span[1]/span[2]/span[1]");
-    By inputPuertoOrigenElem = By.xpath("//input[@aria-owns='idPuertoOrigen_listbox']");
-    By inputCoordElem = By.xpath("//input[@id='bxsCoordinadas']");
-    By inputReservadasElem = By.xpath("//input[@id='cajasReservadas']");
-    By inputPesoNetoElem = By.xpath("//input[@id='pesoNetoCajasReservadas']");
-    By inputPesoVolElem = By.xpath("//input[@id='pesoVolumenCajasReservadas']");
-    By selectPagoElem = By.xpath("//td[@data-container-for='tipoPago']/span[@aria-owns='tipoPago_listbox']");
+
     By pagoCC = By.xpath("//body/div[113]/div[1]/div[3]/ul[1]/li[1]");
     By pagoPP = By.xpath("//body/div[113]/div[1]/div[3]/ul[1]/li[2]");
     By puertoDestinoBoxElem = By.xpath("//input[@aria-owns='idPuertoDestino_listbox']");
@@ -46,7 +31,6 @@ public class SmokeTest extends TestBase{
     //By textoAlertBrokerNo = By.xpath("//div[@id='cargaAdvertenciaNoParamerizado']/text()[1])");
     By botonCerrarBroker = By.xpath("//div[@id='modalAdvertenciaNoParamerizado']//button[@class='close']");
     By textoAlertBrokerNo2 = By.xpath("//*[@id='cargaAdvertenciaNoParamerizado']/text()[1]");
-    String idClienteText = "PASSION GROWERS WEST LLCMIA";
     //By puertoDocListElem = By.xpath("//tbody/tr[1]/td[29]/span[1]/span[1]/span[2]/span[1]");
     By puertoDocListElem = By.xpath("//td[@data-container-for='ciudadDestinoDocumentos']/span[@aria-owns='idPuertoDestinoDocumentos_listbox']");
     By puertoDocBoxElem = By.xpath("//input[@aria-owns='idPuertoDestinoDocumentos_listbox']");
@@ -68,12 +52,8 @@ public class SmokeTest extends TestBase{
     By guardarButtonElem = By.id("botonActualizarFilaGuias");
     private final static Logger LOGGER = Logger.getLogger("bitacora.subnivel.Control");
 
-
-
     @Given("^El usuario se encuentra en la pagina de Login de AC$")
     public void elUsuarioSeEncuentraEnLaPaginaDeLoginDeAC() throws Throwable {
-        //String urlLogin = driver.getTitle();
-        //String titleLoginPAge = "Login - LAG";
         Assert.assertEquals(loginPage.getTitleLoginPage(),driver.getTitle());
     }
 
@@ -87,7 +67,7 @@ public class SmokeTest extends TestBase{
 
     @When("^Haga click en la flecha verde$")
     public void hagaClickEnLaFlechaVerde() throws Throwable {
-        WebElement flechaButtom = driver.findElement(loginButtonElem);
+        WebElement flechaButtom = driver.findElement(loginPage.getLoginButtonElem());
         flechaButtom.click();
         Thread.sleep(1000);
     }
@@ -110,7 +90,7 @@ public class SmokeTest extends TestBase{
     public void selectField(By listElem, By boxElem,String texto) throws InterruptedException {
         WebElement selectClienteAwbNew = new WebDriverWait(driver,15)
                 .until(ExpectedConditions.elementToBeClickable(listElem));
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         selectClienteAwbNew.click();
         Thread.sleep(1500);
         WebElement  inputClienteAwbNew = new WebDriverWait(driver,10)
@@ -123,11 +103,29 @@ public class SmokeTest extends TestBase{
         Thread.sleep(1000);
         inputClienteAwbNew.sendKeys(Keys.ENTER);
     }
+
+    public void selectOpcion(By listElem, By OptionElem) throws InterruptedException {
+        WebElement  selectPago = new WebDriverWait(driver,10)
+                .until(ExpectedConditions.presenceOfElementLocated(listElem));
+        selectPago.click();
+        Thread.sleep(1000);
+        WebElement  optionPago = new WebDriverWait(driver,10)
+                .until(ExpectedConditions.presenceOfElementLocated(OptionElem));
+        optionPago.click();
+    }
+    public void closePopUp() throws InterruptedException {
+        //Assert.assertTrue(textoAlertBrokerNo2.toString().contains("no coincide"));
+        //WebElement cerrarBro = new WebDriverWait(driver,10).until(ExpectedConditions.elementToBeClickable(botonCerrarBroker));
+        //JavascriptExecutor executor = (JavascriptExecutor)driver;
+        Thread.sleep(1000);
+        //executor.executeScript("arguments[0].click();", cerrarBro);
+    }
+
     @When("^Hago Click al Menu Principal y Entro al modudo de reservas$")
     public void entroAlModudoDeReservas() throws Throwable {
         Robot robot = new Robot();
         WebElement menuButtom = new WebDriverWait(driver, 10)
-                .until(ExpectedConditions.elementToBeClickable(menuButtonElem));
+                .until(ExpectedConditions.elementToBeClickable(homePage.getMenuButtonElem()));
         robot.mouseMove(15,150);
         Thread.sleep(1000);
         //intento hacer click asi ya que es mas confiable
@@ -138,13 +136,7 @@ public class SmokeTest extends TestBase{
         robot.mouseMove(10,500);
         robot.mouseWheel(1000);
         Thread.sleep(1000);
-        WebElement expandReservaIcon = new WebDriverWait(driver, 20)
-                .until(ExpectedConditions.presenceOfElementLocated(expandReservaElem));
-        expandReservaIcon.click();
-        Thread.sleep(500);
-        WebElement GestionReservasButton = driver.findElement(gestionReservaMenuElem);
-        GestionReservasButton.click();
-        Thread.sleep(1000);
+        selectOpcion(homePage.getExpandReservaElem(),homePage.getGestionReservaMenuElem());
     }
 
     @When("^Elijo la Fecha en el calendario$")
@@ -163,70 +155,41 @@ public class SmokeTest extends TestBase{
     @When("^Completo los datos de la nueva AWB$")
     public void CompletoLosDatosDeLaNuevaAWB() throws Throwable {
         System.out.println("Completando dato del cliente en el select");
-        Robot robot = new Robot();
-        robot.mouseWheel(40);
-
-    // List Cliente
+        //Robot robot = new Robot();
+        //robot.mouseWheel(60);
+    //CLIENTE
         //JavascriptExecutor executor = (JavascriptExecutor)driver;
         //executor.executeScript("arguments[0].scrollIntoView(true);", selectClienteAwbNewElem);
-        //Thread.sleep(1000);
-        selectField(selectClienteAwbNewElem,inputClienteAwbNewElem, idClienteText);
-
-    // List Transporte
-        selectField(selectTransporteIcaoElem, inputTransporteIcaoElem,"UC");
-
+        selectField(gestionReservasPage.getSelectClienteAwbNewElem(),gestionReservasPage.getInputClienteAwbNewElem(), gestionReservasPage.getIdClienteText());
+    //TRANSPORTE
+        selectField(gestionReservasPage.getSelectTransporteIcaoElem(), gestionReservasPage.getInputTransporteIcaoElem(),"UC");
     //TIPO DE PAGO REQUERIDO SE HABILITA AL ESCOGER EL CLIENTE
-        Thread.sleep(1000);
-        WebElement  selectPago = new WebDriverWait(driver,10)
-                .until(ExpectedConditions.presenceOfElementLocated(selectPagoElem));
-        selectPago.click();
-        Thread.sleep(1000);
-        selectPago.click();
-        Thread.sleep(1000);
-
-    // campos de texto peso coor
+        selectOpcion(gestionReservasPage.getSelectPagoElem(),gestionReservasPage.getTipoPagoOpcionElem());
+    //MEDIDAS
         Thread.sleep(2000);
-        driver.findElement(inputCoordElem).sendKeys("100");
-        driver.findElement(inputReservadasElem).sendKeys("90");
-        driver.findElement(inputPesoNetoElem).sendKeys("800");
-        driver.findElement(inputPesoVolElem).sendKeys("1000");
+        driver.findElement(gestionReservasPage.getInputCoordElem()).sendKeys("100");
+        driver.findElement(gestionReservasPage.getInputReservadasElem()).sendKeys("90");
+        driver.findElement(gestionReservasPage.getInputPesoNetoElem()).sendKeys("800");
+        driver.findElement(gestionReservasPage.getInputPesoVolElem()).sendKeys("1000");
     //PUERTO DE ORIGEN
-        selectField(selectPuertoOrigenElem,inputPuertoOrigenElem,"UIO");
-
+        selectField(gestionReservasPage.getSelectPuertoOrigenElem(),gestionReservasPage.getInputPuertoOrigenElem(),"UIO");
     //PUERTO DE DESTINO
         //selectField(puertoDestinoListElem,puertoDestinoBoxElem,"MIA");
-
     //BROKER
         selectField(brokerListElem,brokerBoxElem,"");
         LOGGER.log(Level.INFO, "Llamando al broker");
-        //Assert.assertTrue(textoAlertBrokerNo2.toString().contains("no coincide"));
-        //WebElement cerrarBro = new WebDriverWait(driver,10).until(ExpectedConditions.elementToBeClickable(botonCerrarBroker));
-        //JavascriptExecutor executor = (JavascriptExecutor)driver;
-        Thread.sleep(1000);
-        //executor.executeScript("arguments[0].click();", cerrarBro);
     //PUERTO DOC
         selectField(puertoDocListElem, puertoDocBoxElem,"");
-
     //PRODUCTO
         selectField(productoListElem, productoBoxElem,"FRESH CUT");
     //TIPO DE GUIA
-        WebElement tipoGList = new WebDriverWait(driver, 10).until(ExpectedConditions.presenceOfElementLocated(tipoGuiaListElem));
-        tipoGList.click();
-        Thread.sleep(1000);
-        WebElement tipoGOpcion = new WebDriverWait(driver, 10).until(ExpectedConditions.presenceOfElementLocated(tipoGuiaOpcionElem));
-        tipoGOpcion.click();
+        selectOpcion(tipoGuiaListElem,tipoGuiaOpcionElem);
     //TIPO DE  VUELO
-        WebElement vueloList = new WebDriverWait(driver, 10).until(ExpectedConditions.presenceOfElementLocated(tipoVueloListElem));
-        vueloList.click();
-        Thread.sleep(1000);
-        WebElement vueloOpcion = new WebDriverWait(driver, 10).until(ExpectedConditions.presenceOfElementLocated(tipoVueloOpcionElem));
-        vueloOpcion.click();
+        selectOpcion(tipoVueloListElem,tipoVueloOpcionElem);
     //BODEGA
         selectField(bodegaListElem, bodegaBoxElem, "TCC-B 33-38");
     //BODEGA DESTINO
         selectField(bodegaDestListElem, bodegaDestBoxElem, "");
-
-
     }
 
     @When("^Se presiona el icono guardar$")
@@ -239,7 +202,6 @@ public class SmokeTest extends TestBase{
     @Then("^Se inserta una nueva fila vacìa en la tabla de reservas$")
     public void seInsertaUnaNuevaFilaVacìaEnLaTablaDeReservas() throws Throwable {
         LOGGER.log(Level.INFO, "Proceso completado exitosamente");
-
     }
 
 
